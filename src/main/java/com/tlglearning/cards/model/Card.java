@@ -3,23 +3,22 @@ package com.tlglearning.cards.model;
 import java.util.Comparator;
 import java.util.Objects;
 
-public class Card implements Comparable<Card>{
-  //implements ability to be comparable to cards
+public final class Card implements Comparable<Card> {
+
+  private static final Comparator<Card> NATURAL_ORDER_COMPARATOR = Comparator
+      .comparing(Card::getSuit)
+      .thenComparing(Card::getRank);
+
   private final Rank rank;
   private final Suit suit;
-
-  private final String rep;
+  private final String representation;
   private final int hash;
-  //you dont want to assign them above b/c then all
-  //cards would have the same values for those fields
 
   public Card(Rank rank, Suit suit) {
     this.rank = rank;
     this.suit = suit;
-    rep = rank.getSymbol() + suit.getSymbol();
+    representation = rank.getSymbol() + suit.getSymbol();
     hash = Objects.hash(rank, suit);
-    //Objects.hash takes the number 31 then the .hash on first object then multiples by 31
-    //then adds hash code for next object
   }
 
   public Rank getRank() {
@@ -32,37 +31,31 @@ public class Card implements Comparable<Card>{
 
   @Override
   public int hashCode() {
-    return super.hashCode();
+    return hash;
   }
 
   @Override
   public boolean equals(Object obj) {
-  boolean result;
-  if(this == obj){
-    result = true;
-    //checking if the instance being called is the same object
-    //its being compared to (pointing to same place in memory)
-  }else if(obj instanceof Card){
-    Card other = (Card) obj;
-    //even if we know its an instance of Card,
-    //its reference type is still Object
-    result = (rank == other.rank && suit == other.suit);
-    }else{
-    result = false;
-  }
-  return result;
+    boolean result;
+    if (this == obj) {
+      result = true;
+    } else if (obj instanceof Card) {
+      Card other = (Card) obj;
+      result = (rank == other.rank && suit == other.suit);
+    } else {
+      result = false;
+    }
+    return result;
   }
 
   @Override
   public String toString() {
-    return rep;
+    return representation;
   }
 
   @Override
   public int compareTo(Card other) {
-    return Comparator.comparing(Card::getSuit)
-        .thenComparing(Card::getRank)
-        .compare(this, other);
+    return NATURAL_ORDER_COMPARATOR.compare(this, other);
   }
-  //simplified natural order using Comparator.
+
 }
